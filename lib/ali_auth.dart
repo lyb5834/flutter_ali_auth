@@ -54,6 +54,11 @@ class AliAuth {
     return await _channel.invokeMethod('quitPage');
   }
 
+  /// 检查认证环境
+  static Future<bool> checkEnvAvailable() async {
+    return await _channel.invokeMethod('checkEnvAvailable');
+  }
+
   /// pageRoute
   static Future<void> openPage(String? pageRoute) async {
     return await _channel
