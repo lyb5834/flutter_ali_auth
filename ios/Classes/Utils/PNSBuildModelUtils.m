@@ -164,6 +164,7 @@
 + (TXCustomModel *)buildFullScreenPortraitModel:(NSDictionary *)viewConfig
                                                         target:(id)target
                                                       selector:(SEL)selector{
+    NSLog(@"viewConfig = %@",viewConfig);
   TXCustomModel *model = [[TXCustomModel alloc] init];
   /// 导航设置
   model.navIsHidden = [viewConfig boolValueForKey: @"navHidden" defaultValue: NO];
@@ -173,18 +174,18 @@
     [NSAttributedString alloc]
       initWithString: [viewConfig stringValueForKey: @"navText" defaultValue: @"一键登录"]
           attributes: @{
-            NSForegroundColorAttributeName: UIColor.whiteColor,
+            NSForegroundColorAttributeName: [self getColor: [viewConfig stringValueForKey: @"navTextColor" defaultValue: @"#FFFFFF"]],
             NSFontAttributeName : [UIFont systemFontOfSize: [viewConfig floatValueForKey: @"navTextSize" defaultValue: 20.0]]
           }
   ];
-  
+
   /// 返回按钮 START
   bool isHiddenNavBack = [viewConfig boolValueForKey: @"navReturnHidden" defaultValue: NO];
   model.hideNavBackItem = isHiddenNavBack;
   /// 动态读取assets文件夹下的资源
   UIImage * navBackImage = [self changeUriPathToImage: [viewConfig stringValueForKey: @"webNavReturnImgPath" defaultValue: nil]];
   model.navBackImage = navBackImage?:[UIImage imageNamed:@"icon_close_light"];
-  
+
   if (!isHiddenNavBack) {
     /// 自定义返回按钮
     model.navBackButtonFrameBlock = ^CGRect(CGSize screenSize, CGSize superViewSize, CGRect frame) {
@@ -196,19 +197,19 @@
                                    CGRectGetHeight(frame));
       frame.origin.y = [viewConfig floatValueForKey: @"navReturnOffsetY" defaultValue: 5];
       frame.origin.x = [viewConfig floatValueForKey: @"navReturnOffsetX" defaultValue: 15];
-      
+
       frame.size.width = [viewConfig floatValueForKey: @"navReturnImgWidth" defaultValue: 40];
       frame.size.height = [viewConfig floatValueForKey: @"navReturnImgHeight" defaultValue: 40];
       return frame;
     };
   }
   /// 返回按钮 END
-  
+
   /// 右侧按钮布局设置
   // UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeSystem];
   // [rightBtn setTitle:@"更多" forState:UIControlStateNormal];
   // model.navMoreView = rightBtn;
-  
+
   /// 协议页面导航设置
   model.privacyNavColor = [self getColor: [viewConfig stringValueForKey: @"webNavColor" defaultValue: @"#000"]];
   UIImage * privacyNavBackImage = [self changeUriPathToImage: [viewConfig stringValueForKey: @"webNavReturnImgPath" defaultValue: nil]];
@@ -217,7 +218,7 @@
   }
   model.privacyNavTitleFont = [UIFont systemFontOfSize: [viewConfig floatValueForKey: @"webNavTextSize" defaultValue: 18]];
   model.privacyNavTitleColor = [self getColor: [viewConfig stringValueForKey: @"webNavTextColor" defaultValue: @"#000"]];
-  
+
   /// logo 设置
   model.logoIsHidden = [viewConfig boolValueForKey: @"logoHidden" defaultValue: NO];
   UIImage * image = [self changeUriPathToImage: [viewConfig stringValueForKey: @"logoImgPath" defaultValue: nil]];
@@ -232,7 +233,7 @@
     };
     model.logoImage = image;
   }
-  
+
   /// slogan 设置 START
   model.sloganIsHidden = [viewConfig boolValueForKey: @"sloganHidden" defaultValue: NO];
   model.sloganText = [
@@ -254,7 +255,7 @@
     }
   };
   /// slogan 设置 END
-  
+
   /// number 设置 START
   model.numberColor = [self getColor: [viewConfig stringValueForKey: @"numberColor" defaultValue: @"#555"]];
   model.numberFont = [UIFont systemFontOfSize: [viewConfig floatValueForKey: @"numberSize" defaultValue: 17]];
@@ -267,7 +268,7 @@
       return frame;
   };
   /// number 设置 END
-  
+
   /// 登录按钮的设置 START
   model.loginBtnText = [
     [NSAttributedString alloc]
@@ -309,9 +310,9 @@
       return frame;
   };
   /// 登录按钮的设置 END
-  
+
   //model.autoHideLoginLoading = NO;
-  
+
   /// 协议设置 START
   model.privacyOne = @[
     [viewConfig stringValueForKey: @"protocolOneName" defaultValue: nil],
@@ -329,7 +330,7 @@
     [self getColor: [viewConfig stringValueForKey: @"protocolColor" defaultValue: @"#F00F00"]],
     [self getColor: [viewConfig stringValueForKey: @"protocolCustomColor" defaultValue: @"#FDFDFD"]]
   ];
-  
+
   /** 导航背景色*/
   model.privacyNavColor = [self getColor: [viewConfig stringValueForKey: @"webNavColor" defaultValue: @"#FFFFFF"]];
   /** 导航文字色 */
@@ -341,11 +342,11 @@
   if (webNavReturnImgPath != nil) {
     model.privacyNavBackImage = webNavReturnImgPath;
   }
-  
+
   model.privacyAlignment = NSTextAlignmentCenter;
   model.privacyFont = [UIFont fontWithName:@"PingFangSC-Regular" size: [viewConfig floatValueForKey: @"privacyTextSize" defaultValue: 12.0]];
   model.privacyPreText = [viewConfig stringValueForKey: @"privacyBefore" defaultValue: @"点击一键登录并登录表示您已阅读并同意"];
-  model.privacySufText = [viewConfig stringValueForKey: @"privacyEnd" defaultValue: @"思预云用户协议，隐私"];
+  model.privacySufText = [viewConfig stringValueForKey: @"privacyEnd" defaultValue: @"用户协议，隐私"];
   model.privacyOperatorPreText = [viewConfig stringValueForKey: @"vendorPrivacyPrefix" defaultValue: @"《"];
   model.privacyOperatorSufText = [viewConfig stringValueForKey: @"vendorPrivacySuffix" defaultValue: @"》"];
   

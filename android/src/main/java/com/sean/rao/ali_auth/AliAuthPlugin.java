@@ -99,7 +99,11 @@ public class AliAuthPlugin extends FlutterActivity implements FlutterPlugin, Act
         }
         break;
       case "checkEnvAvailable":
-        oneKeyLoginPublic.checkEnvAvailable(2);
+        Log.i(TAG,"checkEnvAvailable");
+        if (oneKeyLoginPublic == null) {
+          oneKeyLoginPublic = new OneKeyLoginPublic(mActivity, _events, call.arguments);
+        }
+        oneKeyLoginPublic.checkEnvAvailable(2,result);
         break;
       case "quitPage":
         oneKeyLoginPublic.quitPage();
@@ -142,7 +146,7 @@ public class AliAuthPlugin extends FlutterActivity implements FlutterPlugin, Act
           //customToast.setAnimationsId(R.anim.xxx);
           // 设置短 Toast 的显示时长（默认是 2000 毫秒）
           customToast.setShortDuration(1000);
-            // 设置长 Toast 的显示时长（默认是 3500 毫秒）
+          // 设置长 Toast 的显示时长（默认是 3500 毫秒）
           customToast.setLongDuration(5000);
           toast.setMargin(toast.getHorizontalMargin(), 10);
           return toast;

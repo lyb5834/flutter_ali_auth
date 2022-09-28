@@ -109,6 +109,7 @@ bool bool_false = false;
   }
   else if ([@"checkEnvAvailable" isEqualToString:call.method]) {
     [self checkVerifyEnable:call result:result];
+    result(@([TXCommonUtils simSupportedIsOK]));
   }
   else  if ([@"preLogin" isEqualToString:call.method]) {
     [self getPreLogin:call result:result];

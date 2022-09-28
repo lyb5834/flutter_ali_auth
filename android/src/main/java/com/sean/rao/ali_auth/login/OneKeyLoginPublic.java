@@ -1,5 +1,7 @@
 package com.sean.rao.ali_auth.login;
 
+import static io.flutter.plugin.common.MethodChannel.*;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -24,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodChannel;
 
 /**
  * 进app直接登录的场景
@@ -41,6 +44,7 @@ public class OneKeyLoginPublic {
     public EventChannel.EventSink eventSink;
     public boolean sdkAvailable = true;
     public AuthUIConfig.Builder config;
+    private  Result checkResult;
 
     public OneKeyLoginPublic(Activity activity, EventChannel.EventSink _eventSink, Object arguments){
         mActivity = activity;
@@ -68,13 +72,17 @@ public class OneKeyLoginPublic {
             public void onTokenSuccess(String s) {
                 sdkAvailable = true;
                 try {
-                    Log.i(TAG, "checkEnvAvailable：" + s);
+                    Log.i(TAG, "eee checkEnvAvailable：" + s);
                     TokenRet tokenRet = TokenRet.fromJson(s);
                     if (ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())) {
                         /// 延时登录的情况下加速拉起一键登录页面
                         if (jsonObject.getBooleanValue("isDelay")) {
                             accelerateLoginPage(5000);
                         }
+                        if (checkResult != null) {
+                            checkResult.success(true);
+                        }
+                        Log.i(TAG, "checkEnvAvailableState：" + "true");
                     }
 
                     if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
@@ -84,6 +92,7 @@ public class OneKeyLoginPublic {
                     }
                     eventSink.success(UtilTool.resultFormatData(tokenRet.getCode(), null, tokenRet.getToken()));
                 } catch (Exception e) {
+                    Log.i(TAG, "获取token失败：" + e);
                     e.printStackTrace();
                 }
             }
@@ -93,6 +102,9 @@ public class OneKeyLoginPublic {
                 sdkAvailable = false;
                 mPhoneNumberAuthHelper.hideLoginLoading();
                 Log.e(TAG, "获取token失败：" + s);
+                if (checkResult != null) {
+                    checkResult.success(false);
+                }
                 try {
                     TokenRet tokenRet = TokenRet.fromJson(s);
                     eventSink.success(UtilTool.resultFormatData(tokenRet.getCode(), tokenRet.getMsg(),null));
@@ -169,6 +181,13 @@ public class OneKeyLoginPublic {
             public void onTokenSuccess(String s) {
                 TokenRet tokenRet = TokenRet.fromJson(s);
                 try {
+                    if (ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())) {
+                        /// 延时登录的情况下加速拉起一键登录页面
+                        if (checkResult != null) {
+                            checkResult.success(true);
+                        }
+                        Log.i(TAG, "checkEnvAvailableState：" + "true");
+                    }
                     if (ResultCode.CODE_START_AUTHPAGE_SUCCESS.equals(tokenRet.getCode())) {
                         Log.i(TAG, "唤起授权页成功：" + s);
                     }
@@ -186,6 +205,9 @@ public class OneKeyLoginPublic {
             @Override
             public void onTokenFailed(String s) {
                 Log.e(TAG, "获取token失败：" + s);
+                if (checkResult != null) {
+                    checkResult.success(false);
+                }
                 //如果环境检查失败 使用其他登录方式
                 try {
                     TokenRet tokenRet = TokenRet.fromJson(s);
@@ -208,7 +230,9 @@ public class OneKeyLoginPublic {
      * 600024 终端⽀持认证
      * 600013 系统维护，功能不可⽤
      */
-    public void checkEnvAvailable(@IntRange(from = 1, to = 2) int type){
+    public void checkEnvAvailable(@IntRange(from = 1, to = 2) int type, Result result){
+        checkResult = result;
+        mPhoneNumberAuthHelper = PhoneNumberAuthHelper.getInstance(mActivity.getApplicationContext(), mTokenResultListener);
         mPhoneNumberAuthHelper.checkEnvAvailable(PhoneNumberAuthHelper.SERVICE_TYPE_LOGIN);
     }
 
@@ -226,6 +250,8 @@ public class OneKeyLoginPublic {
      * @return
      */
     private JSONObject formatParmas(Object parmas){
+        Log.i(TAG,"formatParmas " + parmas);
+        if (parmas == null) return null;
         JSONObject formatData = JSONObject.parseObject(JSONObject.toJSONString(parmas));
         Iterator iter = formatData.entrySet().iterator();
         while (iter.hasNext()) {
