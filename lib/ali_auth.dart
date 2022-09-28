@@ -55,7 +55,7 @@ class AliAuth {
   }
 
   /// 检查认证环境
-  static Future<bool> checkEnvAvailable() async {
+  static Future<bool> get checkEnvAvailable async {
     return await _channel.invokeMethod('checkEnvAvailable');
   }
 
