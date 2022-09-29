@@ -18,22 +18,23 @@ Pod::Spec.new do |s|
   s.dependency 'SDWebImage'
   s.dependency 'MJExtension'
   s.dependency 'MBProgressHUD'
+  s.dependency 'YBAliAuthSDK', '~> 2.12.9'
 
-  s.vendored_frameworks = 'libs/ATAuthSDK.framework', 'libs/YTXMonitor.framework', 'libs/YTXOperators.framework'
-  s.static_framework = false
+  # s.vendored_frameworks = 'libs/ATAuthSDK.framework', 'libs/YTXMonitor.framework', 'libs/YTXOperators.framework'
+  # s.static_framework = false
 
-  # 解决移动crash
-  s.xcconfig = {
-    'OTHER_LDFLAGS' => '-ObjC',
-    'ENABLE_BITCODE' => 'NO'
-  }
+  # # 解决移动crash
+  # s.xcconfig = {
+  #   'OTHER_LDFLAGS' => '-ObjC',
+  #   'ENABLE_BITCODE' => 'NO'
+  # }
   
   # 加载静态资源
   s.resources = ['Assets/*']
 
-  s.ios.deployment_target = '9.0'
-  # s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
-  s.pod_target_xcconfig = {'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64'   }
-  s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+  # s.ios.deployment_target = '9.0'
+  # # s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
+  # s.pod_target_xcconfig = {'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64'   }
+  # s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 end
 
